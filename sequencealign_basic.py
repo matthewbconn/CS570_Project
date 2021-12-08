@@ -38,42 +38,58 @@ def sequenceAlignment(X, Y):
             A[i][j] = min(alpha_dict.get(alphapair) + A[i - 1][j - 1], delta + A[i - 1][j], delta + A[i][j - 1])
 
     print(A)
+    print("A[m-1][n] = " + str(A[m-1][n])+"\n")
+    print("A[m][n-1] = " + str(A[m][n-1])+"\n")
     print("A[m][n] = " + str(A[m][n])+"\n")
 
-    x_matching = y_matching = ""
-    i = m - 1; j = n - 1
-    while i >= 0 and j >= 0:
-        alphapair = X[i] + Y[j]
-        if A[i][j] == A[i-1][j-1] + alpha_dict.get(alphapair):
-            # print("x["+str(i)+"] and y["+str(j)+"] aligned")
-            x_matching = x_matching + X[i]
-            y_matching = y_matching + Y[j]
-            i = i - 1; j = j - 1
-        elif A[i][j] == A[i-1][j] + delta:
-            # print("gap on y["+str(j)+"]")
-            x_matching = x_matching + X[i]
-            y_matching = y_matching + '_'
+    x_matching = []
+    x_unrev = []
+    y_matching = []
+    y_unrev = []
+    i = m
+    j = n
+
+    alphapair = ""
+
+    top = 30
+    bot = 15
+    line = "     "
+    for c in range(bot,top):
+        line = line + "   j=" + str(c) + ""
+    print(line)
+    for a in range(bot, top):
+        line = "i = " + str(a)
+        for b in range(bot, top):
+            line = line + "  " + str(A[a][b])
+        print(line)
+
+    x_align = ""
+    y_align = ""
+    while i != 0 and j != 0:
+        alphapair = X[i-1] + Y[j-1]
+        if A[i][j] == (A[i - 1][j - 1] + alpha_dict.get(alphapair)):
+            x_align = X[i-1] + x_align
+            y_align = Y[j-1] + y_align
             i = i - 1
-        else:
-            # print("gap on x[" + str(i) + "]")
-            x_matching = x_matching + '_'
-            y_matching = y_matching + Y[j]
             j = j - 1
 
-    while i >= 0 or j >= 0:
-        if j > 0:
-            x_matching = x_matching + '_'
-            y_matching = y_matching + Y[j]
+        elif A[i][j] == (A[i][j-1] + delta):
+            x_align = '_' + x_align
+            y_align = Y[j-1] + y_align
             j = j - 1
-        else:
-            x_matching = x_matching + X[i]
-            y_matching = y_matching + '_'
+
+        elif A[i][j] == (A[i - 1][j] + delta):
+            x_align = X[i-1] + x_align
+            y_align = '_' + y_align
             i = i - 1
 
-    x_rev_matching = x_matching[::-1]
-    y_rev_matching = y_matching[::-1]
-    print(x_rev_matching)
-    print(y_rev_matching)
+        else:
+            print("Error! at (i = " + str(i) + ", j = " + str(j) + ")")
+
+    xlen = len(x_align)
+    print(x_align[0:49] + " " + x_align[xlen-50:xlen])
+    ylen = len(y_align)
+    print(y_align[0:49] + " " + y_align[ylen-50:ylen])
 
     # print("Found magic val?")
     # if 1296 in A:
