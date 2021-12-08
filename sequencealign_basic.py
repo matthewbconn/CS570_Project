@@ -1,14 +1,25 @@
+import time
+import psutil
+import os
 import numpy as np
 
 
 def main():
-    print('Hello, World!\n')
+    # print('Hello, World!\n')
     x, y = generate_input()
-    print(x+"\n"+y+"\n")
-    sequenceAlignment(x, y)
+    # print(x+"\n"+y+"\n")
+    x_al, y_al, score,tdif = sequenceAlignment(x, y)
+    # print("% = " + percent + " vs. system available total = " + str(psutil.virtual_memory()[0]/(1048576)) + " MBytes")
+    mb_used = str(psutil.Process(os.getpid()).memory_percent() * (psutil.virtual_memory()[0]/(2**20)))
+    f = open("output.txt","w")
+    s = x_al + "\n" + y_al + "\n" + score + "\n" + tdif + "\n" + mb_used
+    f.write(s)
+    #print(s)
+    f.close()
 
 
 def sequenceAlignment(X, Y):
+    tstart = time.time()
     alpha_dict = {'AA': 0, 'AC': 110, 'AG': 48, 'AT': 94, 'CA': 110, 'CC': 0, 'CG': 118, 'CT': 48, 'GA': 48, 'GC': 118,
                   'GG': 0, 'GT': 110, 'TA': 98, 'TC': 48, 'TG': 110, 'TT': 0}
     delta = 30
@@ -95,10 +106,16 @@ def sequenceAlignment(X, Y):
         j = j - 1
 
     xlen = len(x_align)
-    print(x_align[0:49] + " " + x_align[xlen-50:xlen])
+    x_out = x_align[0:50] + " " + x_align[xlen - 50:xlen]
+    #print(x_out)
     ylen = len(y_align)
-    print(y_align[0:49] + " " + y_align[ylen-50:ylen])
-    print(str(A[m][n]))
+    y_out = y_align[0:50] + " " + y_align[ylen-50:ylen]
+    #print(y_out)
+    score = str(A[m][n])
+    #print(str(A[m][n]))
+    tfin = time.time()
+    tdif = str(tfin - tstart)
+    return x_out, y_out, score, tdif
 
 def generate_input():
     all_inputs = read_inputs()
