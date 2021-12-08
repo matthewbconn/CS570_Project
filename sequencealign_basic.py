@@ -29,6 +29,7 @@ def sequenceAlignment(X, Y):
                 alphapair = X[i-1] + Y[j-1]
             except:
                 print("An error occurred with (i = " + str(i) + ", j = " + str(j) + ")")
+            # these are just used for debugging; the next 6 lines could be deleted and everything works fine
             match_xy = alpha_dict.get(alphapair) + A[i-1][j-1]
             unmatchX = delta + A[i-1][j]
             unmatchY = delta + A[i][j-1]
@@ -37,31 +38,27 @@ def sequenceAlignment(X, Y):
             a_i_jm1 = A[i][j - 1]
             A[i][j] = min(alpha_dict.get(alphapair) + A[i - 1][j - 1], delta + A[i - 1][j], delta + A[i][j - 1])
 
-    print(A)
-    print("A[m-1][n] = " + str(A[m-1][n])+"\n")
-    print("A[m][n-1] = " + str(A[m][n-1])+"\n")
-    print("A[m][n] = " + str(A[m][n])+"\n")
+    # print(A)
+    # print("A[m-1][n] = " + str(A[m-1][n])+"\n")
+    # print("A[m][n-1] = " + str(A[m][n-1])+"\n")
+    # print("A[m][n] = " + str(A[m][n])+"\n")
 
-    x_matching = []
-    x_unrev = []
-    y_matching = []
-    y_unrev = []
     i = m
     j = n
 
-    alphapair = ""
+    alphapair = "" # also for debugging
 
-    top = 30
-    bot = 15
-    line = "     "
-    for c in range(bot,top):
-        line = line + "   j=" + str(c) + ""
-    print(line)
-    for a in range(bot, top):
-        line = "i = " + str(a)
-        for b in range(bot, top):
-            line = line + "  " + str(A[a][b])
-        print(line)
+    # top = 30
+    # bot = 15
+    # line = "     "
+    # for c in range(bot,top):
+    #     line = line + "   j=" + str(c) + ""
+    # print(line)
+    # for a in range(bot, top):
+    #     line = "i = " + str(a)
+    #     for b in range(bot, top):
+    #         line = line + "  " + str(A[a][b])
+    #     print(line)
 
     x_align = ""
     y_align = ""
@@ -86,17 +83,22 @@ def sequenceAlignment(X, Y):
         else:
             print("Error! at (i = " + str(i) + ", j = " + str(j) + ")")
 
+
+    while i != 0: # gaps on y's
+        x_align = X[i - 1] + x_align
+        y_align = '_' + y_align
+        i = i - 1
+
+    while j != 0: # gaps on x's
+        x_align = '_' + x_align
+        y_align = Y[j - 1] + y_align
+        j = j - 1
+
     xlen = len(x_align)
     print(x_align[0:49] + " " + x_align[xlen-50:xlen])
     ylen = len(y_align)
     print(y_align[0:49] + " " + y_align[ylen-50:ylen])
-
-    # print("Found magic val?")
-    # if 1296 in A:
-    #     print(True)
-    # else:
-    #     print(False)
-
+    print(str(A[m][n]))
 
 def generate_input():
     all_inputs = read_inputs()
