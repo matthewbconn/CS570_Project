@@ -2,10 +2,9 @@ import numpy as np
 
 
 def main():
-    print('Hello, World!')
+    print('Hello, World!\n')
     x, y = generate_input()
-    print(x)
-    print(y)
+    print(x+"\n"+y+"\n")
     sequenceAlignment(x, y)
 
 
@@ -37,36 +36,39 @@ def sequenceAlignment(X, Y):
             a_im1_j = A[i - 1][j]
             a_i_jm1 = A[i][j - 1]
             A[i][j] = min(alpha_dict.get(alphapair) + A[i - 1][j - 1], delta + A[i - 1][j], delta + A[i][j - 1])
-            if A[i][j] == 1296:
-                print("Found at i = "+str(i)+" , j = " +str(j))
 
     print(A)
-    print("A[:][n-1] = " + str(A[:][n-1]) + "\n")
-    print("A[m-1][:] = " + str(A[m-1][:]) + "\n")
-
-    print("A[:][n] = " + str(A[:][n])+"\n")
-    print("A[m][:] = " + str(A[m][:]) + "\n")
     print("A[m][n] = " + str(A[m][n])+"\n")
 
     x_matching = y_matching = ""
     i = m - 1; j = n - 1
-    while i > 0 and j > 0:
+    while i >= 0 and j >= 0:
         alphapair = X[i] + Y[j]
         if A[i][j] == A[i-1][j-1] + alpha_dict.get(alphapair):
-            print("x["+str(i)+"] and y["+str(j)+"] aligned")
+            # print("x["+str(i)+"] and y["+str(j)+"] aligned")
             x_matching = x_matching + X[i]
             y_matching = y_matching + Y[j]
             i = i - 1; j = j - 1
         elif A[i][j] == A[i-1][j] + delta:
-            print("gap on y["+str(j)+"]")
+            # print("gap on y["+str(j)+"]")
             x_matching = x_matching + X[i]
             y_matching = y_matching + '_'
             i = i - 1
         else:
-            print("gap on x[" + str(i) + "]")
+            # print("gap on x[" + str(i) + "]")
             x_matching = x_matching + '_'
             y_matching = y_matching + Y[j]
             j = j - 1
+
+    while i >= 0 or j >= 0:
+        if j > 0:
+            x_matching = x_matching + '_'
+            y_matching = y_matching + Y[j]
+            j = j - 1
+        else:
+            x_matching = x_matching + X[i]
+            y_matching = y_matching + '_'
+            i = i - 1
 
     x_rev_matching = x_matching[::-1]
     y_rev_matching = y_matching[::-1]
