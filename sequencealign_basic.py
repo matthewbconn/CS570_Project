@@ -2,30 +2,30 @@ import time
 import psutil
 import os
 import numpy as np
-
+import sys
+import datetime
 
 def main():
     # print('Hello, World!\n')
     x, y = generate_input()
     # print(x+"\n"+y+"\n")
-    x_al, y_al, score,tdif = sequenceAlignment(x, y)
-    # print("% = " + percent + " vs. system available total = " + str(psutil.virtual_memory()[0]/(1048576)) + " MBytes")
-    mb_used = str(psutil.Process(os.getpid()).memory_percent() * (psutil.virtual_memory()[0]/(2**20)))
+    x_al, y_al, score,tdif, kb_used = sequenceAlignment(x, y)
     f = open("output.txt","w")
-    s = x_al + "\n" + y_al + "\n" + score + "\n" + tdif + "\n" + mb_used
+    s = score + "\n" + x_al + "\n" + y_al + "\n" + tdif + "\n" + kb_used
     f.write(s)
-    #print(s)
+    print(s) # delete/comment me before submission
     f.close()
 
 
 def sequenceAlignment(X, Y):
     tstart = time.time()
+    ta = datetime.datetime.now()
     alpha_dict = {'AA': 0, 'AC': 110, 'AG': 48, 'AT': 94, 'CA': 110, 'CC': 0, 'CG': 118, 'CT': 48, 'GA': 48, 'GC': 118,
                   'GG': 0, 'GT': 110, 'TA': 98, 'TC': 48, 'TG': 110, 'TT': 0}
     delta = 30
     m = len(X)
     n = len(Y)
-    A = np.zeros((m + 1, n + 1))
+    A = [[0 for i in range(n+1)] for j in range(m+1)] # np.zeros((m + 1, n + 1)) #
 
     for i in range(0, m + 1):
         A[i][0] = delta * i
@@ -54,6 +54,7 @@ def sequenceAlignment(X, Y):
     # print("A[m][n-1] = " + str(A[m][n-1])+"\n")
     # print("A[m][n] = " + str(A[m][n])+"\n")
 
+    #print(str(sys.getsizeof(A)/(2**10)) + " KB used for A[m][n]")
     i = m
     j = n
 
@@ -94,7 +95,6 @@ def sequenceAlignment(X, Y):
         else:
             print("Error! at (i = " + str(i) + ", j = " + str(j) + ")")
 
-
     while i != 0: # gaps on y's
         x_align = X[i - 1] + x_align
         y_align = '_' + y_align
@@ -114,8 +114,12 @@ def sequenceAlignment(X, Y):
     score = str(A[m][n])
     #print(str(A[m][n]))
     tfin = time.time()
-    tdif = str(tfin - tstart)
-    return x_out, y_out, score, tdif
+    tb = datetime.datetime.now()
+    tdif = str(1.0*(tfin - tstart))
+    tdif2 = tb - ta
+
+    kb_used = str(sys.getsizeof(A) / (2 ** 10))
+    return x_out, y_out, score, tdif, kb_used
 
 def generate_input():
     all_inputs = read_inputs()
